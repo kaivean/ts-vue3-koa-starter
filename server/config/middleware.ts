@@ -19,18 +19,10 @@ export default {
      */
     all: ['log'],
 
-
     /**
      * only dynamic requests will pass through these middlewares.
      *
      * @type {Array.<string>}
      */
     dynamic: ['auth'],
-
-    /**
-     * only static requests will pass through these middlewares.
-     *
-     * @type {Array.<string>}
-     */
-    static: []
 };

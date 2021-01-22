@@ -9,7 +9,7 @@ const app = new App();
 
 app.on('error', (error, {ctx}) => {
     if (ctx) {
-        // ctx.saveError(error);
+        ctx.saveError(error);
     }
 });
 

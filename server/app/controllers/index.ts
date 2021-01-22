@@ -24,7 +24,7 @@ export default async function (ctx: Context) {
         ctx.body = res.data;
     }
     else {
-        let file = path.resolve(globals.appdir, 'public', 'index.html');
+        const file = path.resolve(globals.appdir, 'public', 'index.html');
         ctx.body = fs.readFileSync(file, 'utf8');
     }
 };

@@ -3,26 +3,11 @@
  * @author kaivean
  */
 
+import os from 'os';
 import {Context} from 'akb-ts';
 import moment from 'moment';
+import {format} from '../components/util';
 
-function format(messages) {
-    let output = '';
-    messages.forEach(message => {
-        let val = message[1];
-        if (val === undefined || val === null) {
-            val = '';
-        }
-        if (typeof val !== 'string') { // obj array等
-            val = JSON.stringify(val);
-        }
-        // [ ] 转换成形式:  &#x + ASCII值。 因为格式化时外围时[]
-        val = val.replace(/\[/g, '&#x123');
-        val = val.replace(/\]/g, '&#x125');
-        output += `${message[0]}[${val}] `;
-    });
-    return output;
-}
 
 function getLog(ctx: Context) {
     let info = [
@@ -31,7 +16,7 @@ function getLog(ctx: Context) {
         ['status', ctx.status],
         ['method', ctx.method],
         ['ip', ctx.ip],
-        ['host', ctx.ip],
+        ['host', os.hostname()],
         ['cookie', ctx.headers.cookie],
         ['useragent', ctx.headers['user-agent']],
         ['referer', ctx.headers.referer],
@@ -78,6 +63,7 @@ function saveError(e?: Error) {
 
 export default function () {
     return async (ctx: Context, next: () => Promise<any>) => {
+
         ctx.startTime = Date.now();
 
         ctx.customLog = [];
@@ -88,7 +74,7 @@ export default function () {
         ctx.saveError = saveError;
 
         ctx.error = function (msg: string, status: number) {
-            return {
+            ctx.body = {
                 status: status || 1,
                 msg
             };

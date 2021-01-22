@@ -31,12 +31,7 @@
 
         "baseUrl": ".",
         "paths": {
-            "@/app/*": [
-                "app/*"
-            ],
-            "@/config/*": [
-                "config/*"
-            ]
+
         },
 
         "typeRoots": [

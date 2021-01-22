@@ -30,19 +30,23 @@ export function format(messages: any) {
     return output;
 }
 
-// 每个async开始的函数都应该有try catch
-export async function asyncTaskWrapper(fn, logger: Logger) {
+// 每个定时任务开始的函数都应该有try catch
+export async function cronWrapper(fn: (cron: (key: string, value: any) => void) => Promise<any>, logger: Logger) {
     let startTime = Date.now();
     let info = [] as Array<Array<string|number>>;
     info.push(['time', moment().format('YYYY-MM-DD HH:mm:ss')]);
 
+    function addLog(key: string, value: any) {
+        info.push([key, value]);
+    };
+
     try {
-        await fn(info);
+        await fn(addLog);
         info.push(['cost', Date.now() - startTime]);
         logger.info(format(info));
     }
     catch (e) {
-        console.error('asyncTaskWrapper err', e);
+        console.error('cronWrapper err', e);
         info.push(['cost', Date.now() - startTime]);
         logger.error(format(info));
     }
