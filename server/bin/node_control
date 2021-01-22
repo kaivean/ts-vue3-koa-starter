@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+set -e
+
+# 获取基础目录
+ROOT=$(cd $(dirname $0); cd ..; pwd -P)
+cd $ROOT
+
+# 设置基础环境变量
+NODE_HOME="$ROOT/noderuntime/bin"
+PM2="$ROOT/node_modules/pm2/bin/pm2"
+PM2_RUMTIME="$ROOT/node_modules/pm2/bin/pm2_runtime"
+PM2_CONFIG="$ROOT/pm2.config.js"
+
+export PATH=$NODE_HOME:$PATH
+export NODE_ENV=production
+export APP_NAME=`node -e "console.log(require('$ROOT/package.json').name)"`
+export PM2_HOME="$ROOT/.pm2"
+
+node -v
+
+# 准备好日志需要使用的目录
+mkdir -p "$ROOT/logs/pm2"
+
+mstart() {
+    $PM2 start $PM2_CONFIG
+    sleep 0.5
+    $PM2 list
+}
+
+mruntimestart() {
+    $PM2 start $PM2_CONFIG
+    sleep 0.5
+    $PM2 list
+}
+
+mrestart() {
+    $PM2_RUMTIME startOrRestart $PM2_CONFIG
+    sleep 0.5
+    $PM2 list
+}
+
+mreload() {
+    $PM2 startOrReload $PM2_CONFIG
+    $PM2 list
+}
+
+mstop(){
+    $PM2 stop $APP_NAME
+    $PM2 list
+}
+
+mdelete(){
+    $PM2 delete $APP_NAME
+    $PM2 list
+}
+
+mlist(){
+    $PM2 list
+}
+
+mlogs() {
+    $PM2 logs $APP_NAME
+}
+
+mmonit() {
+    $PM2 monit $APP_NAME
+}
+
+mupdate() {
+    $PM2 update
+}
+
+case X"${1}" in
+    Xstart)
+        mstart
+        ;;
+    Xstop)
+        mstop
+        ;;
+    Xreload)
+        mreload
+        ;;
+    Xrestart)
+        mstart
+        ;;
+    Xdelete)
+        mdelete
+        ;;
+    Xmonit)
+        mmonit
+        ;;
+    Xupdate)
+        mupdate
+        ;;
+    Xlist)
+        mlist
+        ;;
+    Xlogs)
+        mlogs
+        ;;
+    *)
+        echo "Usage: $0 [start|stop|restart|reload|delete|monit|list|logs|update]"
+        exit 1
+        ;;
+esac
+exit $RETVAL

@@ -1,0 +1,23 @@
+Global:
+    version: 2.0
+
+Default:
+    profile : [build]
+
+Profiles:
+  - profile:
+    name : build
+    mode: AGENT
+    environment:
+      cluster: DECK_CENTOS7U5_K3
+    build:
+      command: sh build.sh
+      cache:
+        enable: true             # true 启用缓存，false 禁用缓存
+        paths:
+          - .npm             # 根据模块自身情况，设置代码根目录下子目录为缓存目录, 不支持通过"../" 跳转到代码根目录的上层目录           # 如果存在多个缓存目录，配置多行，一行一个目录
+    artifacts:
+      release: true
+    check:
+      - reuse: TASK
+        enable: false # 不开启流水线任务复用任务，当仅更新fe代码时，可以直接进行构建
